@@ -3,6 +3,6 @@ class Node
 
   def initialize(name)
     @name = name
-    @film_actor_hash = nil
+    @film_actor_hash = []
   end
 end
