@@ -1,33 +1,34 @@
 module GraphsAnswer
-  def find_kevin_bacon(start_node)
-    queue = [{node: start_node, path: "", level: 1}]
-    next_up = queue.pop
+  class NodeStack
+    attr_accessor :start_node, :path
 
-    find_path(next_up.node, queue, next_up.path, next_up.level)
+    def initialize(start_node, path)
+      @start_node = start_node
+      @path = path
+    end
   end
 
-  def find_path(node, queue, path, level)
-    found = false
+  def find_kevin_bacon(start_node)
+    stack = [NodeStack.new(start_node, path)]
+    answer = nil
 
-    node.film_actor_hash.each do |k, actors|
-      actors.each do |actor|
-        if actor.name == "Kevin Bacon"
-          path << "#{k}"
-          found = true
-          break
-        else
-          queue.push({node: actor, path: path << "#{k}", level: level + 1}) if level < 6
+    while stack != [] && !answer
+      item = stack.pop
+
+      item.node.film_actor_hash.each do |film, actors|
+        actors.each do |actor|
+          if actor.name == "Kevin Bacon"
+            answer = path
+            break
+          else
+            stack.push(NodeStack.new(item.actor, item.path + ["#{film}"])) if item.path.length < 6
+          end
         end
+
+        break if answer
       end
-
-      break if found
     end
 
-    if found
-      return path
-    else
-      next_up = queue.shift
-      find_path(next_up.node, queue, path << " -> #{next_up.path}", next_up.level)
-    end
+    return answer
   end
 end
